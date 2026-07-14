@@ -48,27 +48,31 @@ function createObject() {
     }
     
     obj.classList.add('falling-obj');
-    // Posición inicial
     obj.style.left = (Math.random() * (window.innerWidth - 60)) + 'px';
-    obj.style.top = '-60px'; // Usamos px en lugar de vw
+    obj.style.top = '-60px';
     gameContainer.appendChild(obj);
 
     let pos = -60;
-    // Aumentamos velocidad a 8px por intervalo para que sea fluida
+    
     let fall = setInterval(() => {
-        pos += 8; 
+        pos += 6; 
         obj.style.top = pos + 'px';
 
+        // DETECCIÓN DE COLISIÓN MANUAL (La más efectiva para móviles)
         const pRect = player.getBoundingClientRect();
-        const oRect = obj.getBoundingClientRect();
+        const objTop = pos;
+        const objLeft = parseFloat(obj.style.left);
+        const objWidth = 60; // Tamaño aproximado del objeto en px
 
-        // Detectar colisión (margen reducido para mejor experiencia)
-        if (oRect.bottom > pRect.top + 20 && 
-            oRect.top < pRect.bottom && 
-            oRect.right > pRect.left + 20 && 
-            oRect.left < pRect.right - 20) {
-            
+        // Condición: El objeto llega a la altura del jugador Y está en su rango horizontal
+        const isHit = (objTop > pRect.top - 50) && 
+                      (objTop < pRect.bottom) && 
+                      (objLeft > pRect.left - 40) && 
+                      (objLeft < pRect.right - 20);
+
+        if (isHit) {
             if (obj.dataset.type === 'buena') {
+                // Suma 20 si es Balón, 10 si es Gota
                 score += obj.src.includes('Balon.png') ? 20 : 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {

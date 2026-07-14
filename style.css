@@ -27,13 +27,17 @@ body, html {
 /* Jugador - tamaño relativo 25vw */
 #player {
     position: absolute;
-    bottom: 15vh; /* Ajustado para que suba más y no se tape */
+    bottom: 15vh;
     left: 50%;
     transform: translateX(-50%);
     width: 25vw;
     height: 25vw;
+    /* IMPORTANTE: quitamos cualquier evento de puntero que pueda bloquear el cálculo */
     pointer-events: none;
     z-index: 50;
+    /* Quitamos cualquier borde o padding interno */
+    padding: 0;
+    margin: 0;
 }
 .falling-obj {
     position: absolute;

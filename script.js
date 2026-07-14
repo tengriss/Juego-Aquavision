@@ -13,14 +13,13 @@ function resetGame() {
     livesContainer.innerHTML = '<img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart">';
 }
 
-// Movimiento táctil proporcional
+// Movimiento táctil
 gameContainer.addEventListener('touchmove', (e) => {
     e.preventDefault();
     let touch = e.touches[0];
     let playerWidth = player.offsetWidth;
-    
-    // Calcular posición X asegurando límites
     let newX = touch.clientX - (playerWidth / 2);
+    
     if (newX < 0) newX = 0;
     if (newX > window.innerWidth - playerWidth) newX = window.innerWidth - playerWidth;
     
@@ -37,7 +36,6 @@ function createObject() {
     const obj = document.createElement('img');
     const random = Math.random();
     
-    // 30% Gotamala, 35% Gota (10pts), 35% Balón (20pts)
     if (random < 0.3) {
         obj.src = 'assets/Gotamala.png';
         obj.dataset.type = 'mala';
@@ -50,31 +48,30 @@ function createObject() {
     }
     
     obj.classList.add('falling-obj');
+    // Posición inicial
     obj.style.left = (Math.random() * (window.innerWidth - 60)) + 'px';
-    obj.style.top = '-15vw';
+    obj.style.top = '-60px'; // Usamos px en lugar de vw
     gameContainer.appendChild(obj);
 
-    let pos = -15;
+    let pos = -60;
+    // Aumentamos velocidad a 8px por intervalo para que sea fluida
     let fall = setInterval(() => {
-        pos += 2; // Velocidad de caída
-        obj.style.top = pos + 'vw';
+        pos += 8; 
+        obj.style.top = pos + 'px';
 
-        // Colisión
         const pRect = player.getBoundingClientRect();
         const oRect = obj.getBoundingClientRect();
 
-        if (oRect.bottom > pRect.top && oRect.top < pRect.bottom && oRect.right > pRect.left && oRect.left < pRect.right) {
+        // Detectar colisión (margen reducido para mejor experiencia)
+        if (oRect.bottom > pRect.top + 20 && 
+            oRect.top < pRect.bottom && 
+            oRect.right > pRect.left + 20 && 
+            oRect.left < pRect.right - 20) {
             
             if (obj.dataset.type === 'buena') {
-                // Lógica de puntuación: Balón vale 20, Gota vale 10
-                if (obj.src.includes('Balon.png')) {
-                    score += 20;
-                } else {
-                    score += 10;
-                }
+                score += obj.src.includes('Balon.png') ? 20 : 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {
-                // Lógica de vidas
                 lives--;
                 if(livesContainer.firstElementChild) livesContainer.firstElementChild.remove();
                 if (lives <= 0) {
@@ -87,11 +84,11 @@ function createObject() {
         }
 
         // Eliminar si sale de pantalla
-        if (pos > 100) { 
+        if (pos > window.innerHeight) { 
             obj.remove(); 
             clearInterval(fall); 
         }
     }, 20);
 }
 
-setInterval(createObject, 1500);
+setInterval(createObject, 1200);

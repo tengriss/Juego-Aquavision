@@ -1,90 +1,73 @@
 const player = document.getElementById('player');
 const gameContainer = document.getElementById('game-container');
 const scoreElement = document.getElementById('score');
-const livesContainer = document.getElementById('lives');
-
 let score = 0;
 let lives = 3;
 
-function resetGame() {
-    score = 0;
-    lives = 3;
-    scoreElement.innerText = "Puntos: 0";
-    livesContainer.innerHTML = '<img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart">';
-}
-
-// Movimiento táctil proporcional
+// Mover al jugador siguiendo el dedo
 gameContainer.addEventListener('touchmove', (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Evita que la pantalla se desplace
     let touch = e.touches[0];
+    
+    // Centrar la imagen en el dedo
     let playerWidth = player.offsetWidth;
+    player.style.left = (touch.clientX - playerWidth / 2) + 'px';
     
-    // Calcular posición manteniendo al jugador dentro del margen
-    let newX = touch.clientX - (playerWidth / 2);
-    if (newX < 0) newX = 0;
-    if (newX > window.innerWidth - playerWidth) newX = window.innerWidth - playerWidth;
-    
-    player.style.left = newX + 'px';
-    player.style.transform = 'none'; 
+    // Cambiar a la imagen de volando
     player.src = 'assets/Gotavolando.png';
-}, { passive: false });
+});
 
+// Volver a imagen normal al soltar
 gameContainer.addEventListener('touchend', () => {
     player.src = 'assets/Supergota.png';
 });
 
 function createObject() {
     const obj = document.createElement('img');
-    const random = Math.random();
-    
-    // Lógica de tipos
-    if (random < 0.3) {
-        obj.src = 'assets/Gotamala.png';
-        obj.dataset.type = 'mala';
-    } else if (random < 0.65) {
-        obj.src = 'assets/Gota.png';
-        obj.dataset.type = 'buena';
-    } else {
-        obj.src = 'assets/Balon.png';
-        obj.dataset.type = 'buena';
-    }
-    
+    const isBad = Math.random() > 0.7; 
+    obj.src = isBad ? 'assets/Gotamala.png' : 'assets/Gota.png';
     obj.classList.add('falling-obj');
-    // Posición aleatoria dentro del ancho de pantalla
-    obj.style.left = (Math.random() * (window.innerWidth - 60)) + 'px';
-    obj.style.top = '-15vw';
+    
+    // Posición inicial aleatoria
+    obj.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+    obj.style.top = '-50px';
     gameContainer.appendChild(obj);
 
-    let pos = -15;
-    let fall = setInterval(() => {
-        pos += 2; // Velocidad de caída
-        obj.style.top = pos + 'vw';
+    // Bucle de movimiento
+    let pos = -50;
+    let interval = setInterval(() => {
+        pos += 5;
+        obj.style.top = pos + 'px';
 
-        // Colisión
-        const pRect = player.getBoundingClientRect();
-        const oRect = obj.getBoundingClientRect();
+        // DETECCIÓN DE COLISIÓN (Aquí está la magia)
+        const playerRect = player.getBoundingClientRect();
+        const objRect = obj.getBoundingClientRect();
 
-        if (oRect.bottom > pRect.top && oRect.top < pRect.bottom && oRect.right > pRect.left && oRect.left < pRect.right) {
-            if (obj.dataset.type === 'buena') {
+        if (
+            objRect.top < playerRect.bottom &&
+            objRect.bottom > playerRect.top &&
+            objRect.left < playerRect.right &&
+            objRect.right > playerRect.left
+        ) {
+            // Si hay contacto:
+            if (!isBad) {
                 score += 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {
                 lives--;
-                if(livesContainer.firstElementChild) livesContainer.firstElementChild.remove();
-                if (lives <= 0) {
-                    alert("¡Game Over! Puntos: " + score);
-                    resetGame();
-                }
+                document.querySelectorAll('.heart')[0].remove();
+                if (lives <= 0) alert("¡Perdiste!");
             }
-            obj.remove();
-            clearInterval(fall);
+            obj.remove(); // Borramos el objeto al tocarlo
+            clearInterval(interval);
         }
 
-        if (pos > 100) { // Si pasa el 100% de la pantalla (vw)
+        // Si llega al fondo sin ser atrapado
+        if (pos > window.innerHeight) {
             obj.remove();
-            clearInterval(fall);
+            clearInterval(interval);
         }
     }, 20);
 }
 
-setInterval(createObject, 1500);
+setInterval(createObject, 1500); // Crea una gota cada 1.5 segundos

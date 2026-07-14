@@ -27,7 +27,7 @@ body, html {
 /* Jugador - tamaño relativo 25vw */
 #player {
     position: absolute;
-    bottom: 10vh; /* Subido de 5vh a 10vh */
+    bottom: 15vh; /* Ajustado para que suba más y no se tape */
     left: 50%;
     transform: translateX(-50%);
     width: 25vw;

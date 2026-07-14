@@ -66,7 +66,7 @@ function createObject() {
         if (oRect.bottom > pRect.top && oRect.top < pRect.bottom && oRect.right > pRect.left && oRect.left < pRect.right) {
             
             if (obj.dataset.type === 'buena') {
-                // Lógica de puntuación personalizada
+                // Lógica de puntuación: Balón vale 20, Gota vale 10
                 if (obj.src.includes('Balon.png')) {
                     score += 20;
                 } else {
@@ -78,7 +78,7 @@ function createObject() {
                 lives--;
                 if(livesContainer.firstElementChild) livesContainer.firstElementChild.remove();
                 if (lives <= 0) {
-                    alert("¡Game Over! Puntos: " + score);
+                    alert("¡Game Over! Puntos totales: " + score);
                     resetGame();
                 }
             }

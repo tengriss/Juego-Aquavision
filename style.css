@@ -1,47 +1,75 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* --- Reinicio básico y configuración de pantalla completa --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body, html {
-    width: 100%; height: 100%;
-    overflow: hidden;
-    touch-action: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Evita scroll innecesario */
+    touch-action: none; /* Evita que el navegador mueva la pantalla al arrastrar */
     background-image: url('assets/fondo.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
 }
 
-#game-container { position: relative; width: 100vw; height: 100vh; }
+/* --- Contenedor principal del juego --- */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
 
-/* Interfaz */
+/* --- Interfaz: Puntos y Vidas --- */
 #ui {
-    position: absolute; top: 5%; left: 5%; right: 5%;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 100;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100; /* Asegura que la UI esté por encima de todo */
 }
 
-#score { font-size: 8vw; color: white; text-shadow: 2px 2px 4px #000; font-weight: bold; }
-#lives { display: flex; gap: 2vw; }
-.heart { width: 10vw; height: 10vw; }
+#score {
+    font-size: 28px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px #000000;
+    font-weight: bold;
+}
 
-/* Jugador - tamaño relativo 25vw */
+#lives {
+    display: flex;
+    gap: 5px;
+}
+
+.heart {
+    width: 40px;
+    height: 40px;
+}
+
+/* --- El Jugador --- */
 #player {
     position: absolute;
-    bottom: 15vh;
+    bottom: 30px; /* Separado del borde inferior */
     left: 50%;
-    transform: translateX(-50%);
-    width: 25vw;
-    height: 25vw;
-    /* IMPORTANTE: quitamos cualquier evento de puntero que pueda bloquear el cálculo */
-    pointer-events: none;
-    z-index: 50;
-    /* Quitamos cualquier borde o padding interno */
-    padding: 0;
-    margin: 0;
+    width: 120px;
+    height: 120px;
+    /* Centrado horizontal preciso */
+    transform: translateX(-50%); 
+    pointer-events: none; /* Permite que el toque pase a través si es necesario */
+    z-index: 50; /* Por encima de los objetos que caen */
 }
+
+/* --- Objetos que caen (Gota, Balón, Gotamala) --- */
 .falling-obj {
     position: absolute;
-    width: 15vw;
-    height: 15vw;
+    width: 80px;
+    height: 80px;
     z-index: 10;
 }

@@ -13,13 +13,14 @@ function resetGame() {
     livesContainer.innerHTML = '<img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart">';
 }
 
-// Movimiento táctil
+// Movimiento táctil proporcional
 gameContainer.addEventListener('touchmove', (e) => {
     e.preventDefault();
     let touch = e.touches[0];
     let playerWidth = player.offsetWidth;
-    let newX = touch.clientX - (playerWidth / 2);
     
+    // Calcular posición manteniendo al jugador dentro del margen
+    let newX = touch.clientX - (playerWidth / 2);
     if (newX < 0) newX = 0;
     if (newX > window.innerWidth - playerWidth) newX = window.innerWidth - playerWidth;
     
@@ -36,6 +37,7 @@ function createObject() {
     const obj = document.createElement('img');
     const random = Math.random();
     
+    // Lógica de tipos
     if (random < 0.3) {
         obj.src = 'assets/Gotamala.png';
         obj.dataset.type = 'mala';
@@ -48,38 +50,29 @@ function createObject() {
     }
     
     obj.classList.add('falling-obj');
+    // Posición aleatoria dentro del ancho de pantalla
     obj.style.left = (Math.random() * (window.innerWidth - 60)) + 'px';
-    obj.style.top = '-60px';
+    obj.style.top = '-15vw';
     gameContainer.appendChild(obj);
 
-    let pos = -60;
-    
+    let pos = -15;
     let fall = setInterval(() => {
-        pos += 6; 
-        obj.style.top = pos + 'px';
+        pos += 2; // Velocidad de caída
+        obj.style.top = pos + 'vw';
 
-        // DETECCIÓN DE COLISIÓN MANUAL (La más efectiva para móviles)
+        // Colisión
         const pRect = player.getBoundingClientRect();
-        const objTop = pos;
-        const objLeft = parseFloat(obj.style.left);
-        const objWidth = 60; // Tamaño aproximado del objeto en px
+        const oRect = obj.getBoundingClientRect();
 
-        // Condición: El objeto llega a la altura del jugador Y está en su rango horizontal
-        const isHit = (objTop > pRect.top - 50) && 
-                      (objTop < pRect.bottom) && 
-                      (objLeft > pRect.left - 40) && 
-                      (objLeft < pRect.right - 20);
-
-        if (isHit) {
+        if (oRect.bottom > pRect.top && oRect.top < pRect.bottom && oRect.right > pRect.left && oRect.left < pRect.right) {
             if (obj.dataset.type === 'buena') {
-                // Suma 20 si es Balón, 10 si es Gota
-                score += obj.src.includes('Balon.png') ? 20 : 10;
+                score += 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {
                 lives--;
                 if(livesContainer.firstElementChild) livesContainer.firstElementChild.remove();
                 if (lives <= 0) {
-                    alert("¡Game Over! Puntos totales: " + score);
+                    alert("¡Game Over! Puntos: " + score);
                     resetGame();
                 }
             }
@@ -87,12 +80,11 @@ function createObject() {
             clearInterval(fall);
         }
 
-        // Eliminar si sale de pantalla
-        if (pos > window.innerHeight) { 
-            obj.remove(); 
-            clearInterval(fall); 
+        if (pos > 100) { // Si pasa el 100% de la pantalla (vw)
+            obj.remove();
+            clearInterval(fall);
         }
     }, 20);
 }
 
-setInterval(createObject, 1200);
+setInterval(createObject, 1500);

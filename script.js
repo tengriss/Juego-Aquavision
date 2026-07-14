@@ -57,23 +57,23 @@ function createObject() {
     let pos = -80;
     
     let fall = setInterval(() => {
-        pos += 7; // Velocidad estable
+        pos += 7; // Velocidad de caída
         obj.style.top = pos + 'px';
 
-        // Obtener posición del jugador (centro de la pantalla)
         const pRect = player.getBoundingClientRect();
         const oRect = obj.getBoundingClientRect();
 
-        // Detección: si el objeto toca la zona del jugador
-        // El margen de +20 ayuda a que se sienta "atrapado" correctamente
-        const isHit = (oRect.bottom > pRect.top + 20) && 
+        // HITBOX ESTRECHA:
+        // Aumentamos los márgenes laterales (+40 / -40) para que el impacto sea más preciso
+        // Ajustamos pRect.top + 40 para que sea un poco más abajo y no detecte "fantasmas" arriba
+        const isHit = (oRect.bottom > pRect.top + 40) && 
                       (oRect.top < pRect.bottom) && 
-                      (oRect.right > pRect.left + 20) && 
-                      (oRect.left < pRect.right - 20);
+                      (oRect.right > pRect.left + 40) && 
+                      (oRect.left < pRect.right - 40);
 
         if (isHit) {
             if (obj.dataset.type === 'buena') {
-                // Si es balón suma 20, si es gota 10
+                // Balón = 20 pts, Gota = 10 pts
                 score += obj.src.includes('Balon.png') ? 20 : 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {

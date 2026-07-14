@@ -19,7 +19,7 @@ gameContainer.addEventListener('touchmove', (e) => {
     let touch = e.touches[0];
     let playerWidth = player.offsetWidth;
     
-    // Calcular posición manteniendo al jugador dentro del margen
+    // Calcular posición X asegurando límites
     let newX = touch.clientX - (playerWidth / 2);
     if (newX < 0) newX = 0;
     if (newX > window.innerWidth - playerWidth) newX = window.innerWidth - playerWidth;
@@ -37,7 +37,7 @@ function createObject() {
     const obj = document.createElement('img');
     const random = Math.random();
     
-    // Lógica de tipos
+    // 30% Gotamala, 35% Gota (10pts), 35% Balón (20pts)
     if (random < 0.3) {
         obj.src = 'assets/Gotamala.png';
         obj.dataset.type = 'mala';
@@ -50,7 +50,6 @@ function createObject() {
     }
     
     obj.classList.add('falling-obj');
-    // Posición aleatoria dentro del ancho de pantalla
     obj.style.left = (Math.random() * (window.innerWidth - 60)) + 'px';
     obj.style.top = '-15vw';
     gameContainer.appendChild(obj);
@@ -65,10 +64,17 @@ function createObject() {
         const oRect = obj.getBoundingClientRect();
 
         if (oRect.bottom > pRect.top && oRect.top < pRect.bottom && oRect.right > pRect.left && oRect.left < pRect.right) {
+            
             if (obj.dataset.type === 'buena') {
-                score += 10;
+                // Lógica de puntuación personalizada
+                if (obj.src.includes('Balon.png')) {
+                    score += 20;
+                } else {
+                    score += 10;
+                }
                 scoreElement.innerText = "Puntos: " + score;
             } else {
+                // Lógica de vidas
                 lives--;
                 if(livesContainer.firstElementChild) livesContainer.firstElementChild.remove();
                 if (lives <= 0) {
@@ -80,9 +86,10 @@ function createObject() {
             clearInterval(fall);
         }
 
-        if (pos > 100) { // Si pasa el 100% de la pantalla (vw)
-            obj.remove();
-            clearInterval(fall);
+        // Eliminar si sale de pantalla
+        if (pos > 100) { 
+            obj.remove(); 
+            clearInterval(fall); 
         }
     }, 20);
 }

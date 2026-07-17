@@ -13,14 +13,12 @@ function resetGame() {
     livesContainer.innerHTML = '<img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart"><img src="assets/Corazon.png" class="heart">';
 }
 
-// Movimiento táctil mejorado
 gameContainer.addEventListener('touchmove', (e) => {
     e.preventDefault();
     let touch = e.touches[0];
     let playerWidth = player.offsetWidth;
     let newX = touch.clientX - (playerWidth / 2);
     
-    // Límites de pantalla
     if (newX < 0) newX = 0;
     if (newX > window.innerWidth - playerWidth) newX = window.innerWidth - playerWidth;
     
@@ -37,11 +35,11 @@ function createObject() {
     const obj = document.createElement('img');
     const random = Math.random();
     
-    // Probabilidades
-    if (random < 0.3) {
+    // Probabilidad ajustada: 40% mala, 30% buena, 30% balón
+    if (random < 0.4) {
         obj.src = 'assets/Gotamala.png';
         obj.dataset.type = 'mala';
-    } else if (random < 0.65) {
+    } else if (random < 0.7) {
         obj.src = 'assets/Gota.png';
         obj.dataset.type = 'buena';
     } else {
@@ -55,8 +53,6 @@ function createObject() {
     gameContainer.appendChild(obj);
 
     let pos = -80;
-    
-    // Velocidad incrementada a 12 para mayor dificultad
     let fall = setInterval(() => {
         pos += 12; 
         obj.style.top = pos + 'px';
@@ -64,8 +60,6 @@ function createObject() {
         const pRect = player.getBoundingClientRect();
         const oRect = obj.getBoundingClientRect();
 
-        // HITBOX ESTRECHA Y PRECISA
-        // Mantengo el margen en 40 para que sea un reto atrapar los objetos
         const isHit = (oRect.bottom > pRect.top + 40) && 
                       (oRect.top < pRect.bottom) && 
                       (oRect.right > pRect.left + 40) && 
@@ -73,7 +67,6 @@ function createObject() {
 
         if (isHit) {
             if (obj.dataset.type === 'buena') {
-                // Balón = 20 pts, Gota = 10 pts
                 score += obj.src.includes('Balon.png') ? 20 : 10;
                 scoreElement.innerText = "Puntos: " + score;
             } else {
@@ -88,7 +81,6 @@ function createObject() {
             clearInterval(fall);
         }
 
-        // Eliminar si pasa de la pantalla
         if (pos > window.innerHeight) { 
             obj.remove(); 
             clearInterval(fall); 
@@ -96,5 +88,4 @@ function createObject() {
     }, 20);
 }
 
-// Frecuencia aumentada a 700ms (casi el doble de rápido que antes)
 setInterval(createObject, 700);

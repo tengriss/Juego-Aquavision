@@ -56,16 +56,16 @@ function createObject() {
 
     let pos = -80;
     
+    // Velocidad incrementada a 12 para mayor dificultad
     let fall = setInterval(() => {
-        pos += 7; // Velocidad de caída
+        pos += 12; 
         obj.style.top = pos + 'px';
 
         const pRect = player.getBoundingClientRect();
         const oRect = obj.getBoundingClientRect();
 
-        // HITBOX ESTRECHA:
-        // Aumentamos los márgenes laterales (+40 / -40) para que el impacto sea más preciso
-        // Ajustamos pRect.top + 40 para que sea un poco más abajo y no detecte "fantasmas" arriba
+        // HITBOX ESTRECHA Y PRECISA
+        // Mantengo el margen en 40 para que sea un reto atrapar los objetos
         const isHit = (oRect.bottom > pRect.top + 40) && 
                       (oRect.top < pRect.bottom) && 
                       (oRect.right > pRect.left + 40) && 
@@ -96,5 +96,5 @@ function createObject() {
     }, 20);
 }
 
-// Genera objetos cada 1.2 segundos
-setInterval(createObject, 1200);
+// Frecuencia aumentada a 700ms (casi el doble de rápido que antes)
+setInterval(createObject, 700);
